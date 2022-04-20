@@ -92,9 +92,9 @@ def main():
                     if id == hex(0x373):
                         batery_state= (((B2)*256)+(B3-128)*128)/100
                         if batery_state < 0 :
-                            charger= "charging"
+                            Charger= "charging"
                         else:
-                            charger=" not charging"
+                            Charger=" not charging"
 
 
                     Dados = {'Range (%)': RangePerc,
@@ -102,10 +102,7 @@ def main():
                               'Mudanças': Gearbox,
                               'Velocidade': Velocity,
                               'Contador de Km': TotalRange,
-                              'Carregador': charger,
-                              'type_miss_average_duration': RangeKm,
-                              'type_miss_average_duration': RangeKm,
-                              'type_miss_average_duration': RangeKm}
+                              'Carregador': Charger}
 
                     pprint(Dados)
                 except:
