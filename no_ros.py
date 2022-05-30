@@ -3,6 +3,7 @@ import kivy
 import rospy
 from std_msgs.msg import String
 from can_receiver.msg import Can_msg
+from can_receiver.msg import Warning_msg
 
 from kivymd.app import MDApp
 from kivy.uix.widget import Widget
@@ -13,6 +14,7 @@ from kivy.properties import StringProperty
 from kivymd.app import MDApp
 from kivy.core.window import Window
 from kivy_garden.mapview import MapView, MapMarkerPopup
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy_garden.speedmeter import SpeedMeter
@@ -23,23 +25,115 @@ from kivy.graphics.svg import Svg
 from kivy.clock import Clock
 from datetime import datetime,timedelta
 
+from kivymd.uix.dialog import MDDialog
+from kivymd.uix.button import MDFlatButton, MDRectangleFlatButton,\
+    MDRoundFlatButton
+
+from kivy.uix.popup import Popup
+from kivy.uix.floatlayout import FloatLayout
+
+from kivy.uix.modalview import ModalView
+
+from kivy.core.audio import SoundLoader
+from kivy.uix.videoplayer import VideoPlayer
+
 import time
 #from kivy.garden.gauge import Gauge
 
+from kivy.uix.screenmanager import Screen
 
 Builder.load_file('build1.kv')
 
-class MyLayout(Widget):
+global notifications
+global darkmode
 
-    def __int__(self):
-        rospy.init_node('listener', anonymous=True)
-        rospy.Subscriber("chatter", Can_msg, self.callback)
+notifications = None
+darkmode = None
+
+class MyLayout(Screen):
+
+#------------------------------------------------------------------
+# ------------- Inicialização dos nós -----------------------------
+#------------------------------------------------------------------
+
+    def __int__(self,):
+        rospy.init_node('dashboard_node', anonymous=True)
+        rospy.Subscriber("can_messages", Can_msg, self.callback)
+        rospy.Subscriber("warning_messages", Warning_msg, self.callback1)
+
+        self.espera = False
+        self.contagem=0
+
 
     def on_start(self):
-        rospy.init_node('listener', anonymous=True)
-        rospy.Subscriber("chatter", Can_msg, self.callback)
 
-    def callback(self,msg):
+        rospy.init_node('dashboard_node', anonymous=True)
+        rospy.Subscriber("can_messages", Can_msg, self.callback)
+        rospy.Subscriber("warning_messages", Warning_msg, self.callback1)
+
+        self.espera = False
+        self.contagem=0
+
+    def press(self):
+
+        rospy.init_node('dashboard_node', anonymous=True)
+        rospy.Subscriber("warning_messages", Warning_msg, self.callback1)
+        rospy.Subscriber("can_messages", Can_msg, self.callback2)
+
+        self.espera= False
+        self.contagem=0
+#------------------------------------------------------------------
+#---- Primeiro calback: Mensagens Warning--------------------------
+#------------------------------------------------------------------
+
+    def callback1(self,msg):
+        print(notifications)
+
+        warn_carregar=msg.carregar
+        warn_porta=msg.porta
+        warn_cinto=msg.cinto
+        warn_ac=msg.ac
+        warn_reverse=msg.reverse
+        warn_autonomia=msg.autonomia
+
+        if warn_carregar is True and self.espera is False:
+            self.espera= True
+            Clock.schedule_once(self.show_alert_dialog1)
+
+
+        if warn_porta is True and self.espera is False:
+            self.espera = True
+            Clock.schedule_once(self.show_alert_dialog2)
+
+
+        if warn_cinto is True and self.espera is False:
+            self.espera = True
+            Clock.schedule_once(self.show_alert_dialog3)
+
+
+        if warn_ac is True and self.espera is False:
+            self.espera = True
+            Clock.schedule_once(self.show_alert_dialog4)
+
+
+        if warn_reverse is True and self.espera is False:
+            self.espera = True
+            Clock.schedule_once(self.show_alert_dialog5)
+
+
+        if warn_autonomia is True and self.espera is False:
+            self.espera = True
+            Clock.schedule_once(self.show_alert_dialog6)
+
+
+#------------------------------------------------------------------
+#------------- Segundo calback: Mensagens CAN----------------------
+#------------------------------------------------------------------
+
+    def callback2(self,msg):
+        #print(darkmode)
+        #print(notifications)
+
         autonomia_perc= msg.autonomia_perc
         autonomia_km= msg.autonomia_km
         contador_km= msg.contador_km
@@ -60,6 +154,9 @@ class MyLayout(Widget):
         medios= msg.medios
         maximos= msg.maximos
         carregador= msg.carregador
+
+        self.autonomia_perc = msg.autonomia_perc
+        self.contador_km = msg.contador_km
 
 
         self.ids.autonomia_km_label.text = str(autonomia_km)
@@ -120,6 +217,7 @@ class MyLayout(Widget):
             self.ids.icon_bateria.icon = "battery-charging-10"
 
         if porta_condutor is True or porta_outras is True:
+
             self.ids.icon_portas.icon = "car-door"
             #Svg("logos/car-door-lock.svg")
             #(source='logos/car-door-lock.png')
@@ -233,24 +331,228 @@ class MyLayout(Widget):
 
         self.ids.time.title = time.asctime()
 
+#------------------------------------------------------------------
+# ---- Warning messages-PopUps ------------------------------------
+#------------------------------------------------------------------
+    dialog1 = None
+    dialog2 = None
+    dialog3 = None
+    dialog4 = None
+    dialog5 = None
+    dialog6 = None
 
-    def press(self):
+    def show_alert_dialog1(self, dt):
+        if not self.dialog1:
+            self.dialog1 = MDDialog(
+                auto_dismiss= False,
+                title="Warning",
+                text="Veiculo a carregar. Coloque em ponto morto!",
+                buttons=[
+                    MDRectangleFlatButton(
+                        text="Close",
+                        on_release=self.close_dialog1,
+                        text_color= (1, 1, 1, 1),
+                        line_color=(1, 1, 1, 1),
+                    ),
+                ],
+            )
+        self.play_sound2()
+        self.dialog1.open()
 
-        rospy.init_node('listener', anonymous=True)
-        rospy.Subscriber("chatter", Can_msg, self.callback)
+
+    def show_alert_dialog2(self, dt):
+        if not self.dialog2:
+            self.dialog2 = MDDialog(
+                auto_dismiss= False,
+                title="Warning",
+                text= "Veiculo em andamento. Feche as portas!",
+                buttons=[
+                    MDRectangleFlatButton(
+                        text="Close",
+                        on_release=self.close_dialog2,
+                        text_color= (1, 1, 1, 1),
+                        line_color=(1, 1, 1, 1),
+                    ),
+                ],
+            )
+        self.play_sound2()
+        self.dialog2.open()
+
+    def show_alert_dialog3(self, dt):
+        if not self.dialog3:
+            self.dialog3 = MDDialog(
+                auto_dismiss= False,
+                title="Warning",
+                text= "Veiculo em andamento. Coloque o Cinto!",
+                buttons=[
+                    MDRectangleFlatButton(
+                        text="Close",
+                        on_release=self.close_dialog3,
+                        text_color= (1, 1, 1, 1),
+                        line_color=(1, 1, 1, 1),
+                    ),
+                ],
+            )
+        self.play_sound2()
+        self.dialog3.open()
+
+    def show_alert_dialog4(self, dt):
+        if not self.dialog4:
+            self.dialog4 = MDDialog(
+                auto_dismiss= False,
+                title="Warning",
+                text= "Baixa autonomia. Desligue o Ar Condicionado!",
+                buttons=[
+                    MDRectangleFlatButton(
+                        text="Close",
+                        on_release=self.close_dialog4,
+                        text_color= (1, 1, 1, 1),
+                        line_color=(1, 1, 1, 1),
+                    ),
+                ],
+            )
+        self.play_sound2()
+        self.dialog4.open()
+
+    def show_alert_dialog5(self, dt):
+        if not self.dialog5:
+            self.dialog5 = MDDialog(
+                auto_dismiss= False,
+                title="Câmara Tarseira",
+                text= "Baixa autonomia. Desligue o ar condicionado!",
+                buttons=[
+                    MDRectangleFlatButton(
+                        text="Close",
+                        on_release=self.close_dialog5,
+                        text_color= (1, 1, 1, 1),
+                        line_color=(1, 1, 1, 1),
+                    ),
+                ],
+            )
+        self.play_sound2()
+        self.dialog5.open()
+
+
+    def show_alert_dialog6(self, dt):
+        if not self.dialog6:
+            self.dialog6 = MDDialog(
+                auto_dismiss= False,
+                title="Warning",
+                text= "Baixa autonomia! 10%",
+                buttons=[
+                    MDRectangleFlatButton(
+                        text="Close",
+                        on_release=self.close_dialog6,
+                        text_color= (1, 1, 1, 1),
+                        line_color=(1, 1, 1, 1),
+                    ),
+                ],
+            )
+        self.play_sound2()
+        self.dialog6.open()
+
+
+    def close_dialog1(self, obj):
+        Clock.schedule_once(self.delay, 5)
+        self.dialog1.dismiss()
+
+    def close_dialog2(self, obj):
+        Clock.schedule_once(self.delay, 5)
+        self.dialog2.dismiss()
+
+    def close_dialog3(self, obj):
+        Clock.schedule_once(self.delay, 5)
+        self.dialog3.dismiss()
+
+    def close_dialog4(self, obj):
+        Clock.schedule_once(self.delay, 5)
+        self.dialog4.dismiss()
+
+    def close_dialog5(self, obj):
+        Clock.schedule_once(self.delay, 5)
+        self.dialog5.dismiss()
+
+    def close_dialog6(self, obj):
+        Clock.schedule_once(self.delay2, 5)
+        self.dialog6.dismiss()
+
+
+
+    def delay(self,dt):
+        self.espera= False
+
+    def delay2(self,dt):
+        if self.autonomia_perc >10 :
+            self.espera= False
+
+
+#------------------------------------------------------------------
+# ---- Sound Notifications ----------------------------------------
+#------------------------------------------------------------------
+
+    def play_sound1(self):
+        sound = SoundLoader.load('audio/audio1.mp3')
+        if sound:
+            sound.volume = 1
+            sound.play()
+
+    def play_sound2(self):
+        sound = SoundLoader.load('audio/audio2.mp3')
+        if sound:
+            sound.volume = 1
+            sound.play()
+
+    def play_video(self):
+        player = VideoPlayer(source = "videos/intro.mp4")
+        player.state = 'play'
+        player.option = {'eos': 'loop'}
+        player.allow_strech = True
+        player.play()
+
+#------------------------------------------------------------------
+# ---- Switch -----------------------------------------------------
+#------------------------------------------------------------------
+
+#------------------------------------------------------------------
+# ---- Contador --------------------------------------------------
+#------------------------------------------------------------------
+    def restart(self):
+        self.contador_fixo = self.contador_km
+        Clock.schedule_interval(self.refresh_contador, 0.5)
+
+
+    def refresh_contador(self, dt):
+        self.contagem= self.contador_km
+
+        contador= (self.contagem - self.contador_fixo)
+        self.ids.contador_parcial.text = str(contador)
+
+
 
 
 class Gps(MapView):
     pass
 
 
+class ContentNavigationDrawer(BoxLayout):
+
+
+    screen_manager = ObjectProperty()
+    nav_drawer = ObjectProperty()
+
+    def switch_click1(self,switchObject,switchValue1):
+        notifications=switchValue1
+        print(switchValue1)
+    def switch_click2(self,switchObject,switchValue2):
+        darkmode=switchValue2
+        print(switchValue2)
+
+
 class DisplayApp(MDApp):
     time = time.asctime()
     def build(self):
-
-
         #Window.borderless = True
-        Window.fullscreen = 'auto'
+        #Window.fullscreen = 'auto'
 
         self.font1="fonts/digital-dream/digital-7.ttf"
         self.font2="fonts/rubik/Rubik-Light.ttf"
@@ -263,5 +565,4 @@ class DisplayApp(MDApp):
 
 if __name__ == '__main__':
     DisplayApp().run()
-
 
