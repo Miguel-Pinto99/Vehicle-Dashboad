@@ -5,7 +5,7 @@ import can
 
 import rospy
 from std_msgs.msg import String
-from can_receiver.msg import Can_msg
+from dashboard.msg import Can_msg
 
 import codecs
 import time

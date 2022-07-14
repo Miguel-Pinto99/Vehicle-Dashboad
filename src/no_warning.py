@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import rospy
 from std_msgs.msg import String
-from can_receiver.msg import Can_msg
-from can_receiver.msg import Warning_msg
+from dashboard.msg import Can_msg
+from dashboard.msg import Warning_msg
 
 
 def callback(msg):
