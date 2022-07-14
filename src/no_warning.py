@@ -6,7 +6,7 @@ from can_receiver.msg import Warning_msg
 
 
 def callback(msg):
-
+    #Receive and store data in variables
     autonomia_perc = msg.autonomia_perc
     autonomia_km = msg.autonomia_km
     contador_km = msg.contador_km
@@ -28,9 +28,11 @@ def callback(msg):
     maximos = msg.maximos
     carregador = msg.carregador
 
+    #Publish function
     pub = rospy.Publisher('warning_messages', Warning_msg, queue_size=10)
     warn=Warning_msg()
 
+    #Generate warnings and build message
     if carregador is True and (mudanca != "Park" or velocidade != 0):
         warn.carregar = True
     else:
@@ -49,7 +51,7 @@ def callback(msg):
         warn.cinto = False
 
 
-    if autonomia_km >= 30 and intensidade_ac != 0:
+    if autonomia_km <= 30 and intensidade_ac != 0:
         warn.ac = True
     else:
         warn.ac = False
@@ -69,12 +71,15 @@ def callback(msg):
     warn.limite_velocidade = False
     warn.proximidade=False
 
+    #Publish warnings
     pub.publish(warn)
     print(warn)
 
 def main():
 
+    #Initialize node
     rospy.init_node('warning_node', anonymous=True)
+    #Subscribe topic
     rospy.Subscriber("can_messages", Can_msg,callback)
     rospy.spin()
 

@@ -12,6 +12,7 @@ import time
 
 def convert(bits):
 
+    #convert bytes to 8 bit array
     if len(bits) != 8:
         if len(bits) == 7 :
             bits= '0' + bits
@@ -36,12 +37,14 @@ def convert(bits):
 
 def main():
 
+    #Parameters of comunication
     #bustype = 'socketcan_native'
     bustype = 'socketcan'
-    channel= 'vcan0'
-    #channel= 'can0'
+    #channel= 'vcan0'
+    channel= 'can0'
     bitrate = 500000
 
+    #Variables inicialization
     AutonomiaPerc=0
     AutonomiaKm=0
     Mudanca= str('Nada')
@@ -64,23 +67,26 @@ def main():
     Medios=0
     Maximos=0
 
+    # publish functiom
     pub = rospy.Publisher('can_messages', Can_msg, queue_size=10)
-    rospy.init_node('can_node', anonymous=True)  # nome do publisher
+    # Inicialize can_node
+    rospy.init_node('can_node', anonymous=True)
     rate = rospy.Rate(10)
 
     while True:
         bus = can.interface.Bus(channel=channel, interface=bustype, bitrate=bitrate)
-        message = bus.recv() #LER MENSAGENS DO CAN
-
-        #O DATA É UM BYTEARRAY
-
+        # Read messages from can
+        message = bus.recv() #Read messages from can
+        # Dectect if any message is avaiable
         if (message != None):
             if (len(message.data) > 0):
                 if (len(message.data) > 0):
 
-
+                    # get id from message
                     id =hex(message.arbitration_id)
 
+
+                    #Store the bytes and bits in variables
                     try:
                         B0=(message.data[0])
                         b0=(bin(message.data[0]))[2:]
@@ -131,7 +137,7 @@ def main():
                     except:
                         pass
 
-
+                    #Compare bytes and bits to database
                     if id == hex(0x424):
                         if int(b0[2]) == 1:
                             Alerta_CintoC = True
@@ -215,10 +221,6 @@ def main():
                     if id == hex(0x412): #Velocity,Range
                         Velocidade = B1
                         Contador_Km = (B2*65536)+(B3*256)+B4
-                        #Porta = (B0 & 0b01001000) == 0b01001000
-
-
-
 
                     if id == hex(0x418): #Mudancas
                         if B0 == 0x50:
@@ -233,16 +235,11 @@ def main():
                             Mudanca=Mudanca
 
 
-
                     if id == hex(0x346): #Range em KM
                         AutonomiaKm=B7
 
-
-
                     if id == hex(0x374): #Range em
                         AutonomiaPerc=(B1-10)/2
-
-
 
                     if id == hex(0x373):
                         EstadoBateria= (((B2)*256)+(B3-128)*128)/100
@@ -251,12 +248,7 @@ def main():
                         else:
                             Carregador= False
 
-
-
-                #except:
-                    #'DATA ERROR'
-
-
+                #Build dictionary with the variables
                 Dados = {'Autonomia (%)': AutonomiaPerc,
                           'Autonomia (Km)': AutonomiaKm,
                           'Mudanças': Mudanca,
@@ -281,7 +273,7 @@ def main():
 
                 pprint(Dados)
 
-
+        #Build message
         msg = Can_msg()
         msg.autonomia_perc= int(AutonomiaPerc)
         msg.autonomia_km= int(AutonomiaKm)
@@ -304,9 +296,8 @@ def main():
         msg.maximos = bool(Maximos)
         msg.carregador = bool(Carregador)
 
-
+        #Publish message
         pub.publish(msg)
-        #rate.sleep()
 
 if __name__ == '__main__':
     main()
