@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <node name="can_node" pkg="can_receiver" type="can_publisher.py"/>
-  <node name="warning_node" pkg="can_receiver" type="no_warning.py"/>
-  <node name="dashboard_node" pkg="can_receiver" type="no_display.py"/>
+  <node name="can_node" pkg="dashboard" type="can_publisher.py"/>
+  <node name="warning_node" pkg="dashboard" type="no_warning.py"/>
+  <node name="dashboard_node" pkg="dashboard" type="no_display.py"/>
 </launch>
