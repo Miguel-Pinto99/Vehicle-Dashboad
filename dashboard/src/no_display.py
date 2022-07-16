@@ -197,7 +197,7 @@ class MyLayout(Screen):
         autonomia_km= msg.autonomia_km
         contador_km= msg.contador_km
         velocidade= msg.velocidade
-        temperatura_ac= msg.temperatura_acz
+        temperatura_ac= msg.temperatura_ac
         intensidade_ac= msg.intensidade_ac
         mudanca= msg.mudanca
         porta_condutor= msg.porta_condutor
