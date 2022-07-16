@@ -139,7 +139,7 @@ def main():
 
                     #Compare bytes and bits to database
                     if id == hex(0x424):
-                        if int(b0[2]) == 1:
+                        if int(b0[1]) == 1:
                             Alerta_CintoC = True
                         else:
                             Alerta_CintoC = False
