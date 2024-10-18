@@ -6,9 +6,13 @@ Repository which contains all the work developed during my thesis. The project c
 
 Link to final document: http://lars.mec.ua.pt/public/LAR%20Projects/SystemDevelopment/2022_MiguelPinto/
 
-https://github.com/user-attachments/assets/c2440cac-1297-480e-ab77-1eee2238d9cd
+https://github.com/user-attachments/assets/24c1fa54-379a-4160-af00-b8634bc3b058
 
 ## Deployment
+
+https://github.com/user-attachments/assets/799038b2-bb0b-4702-9081-312c209ba202
+
+
 
 To run the application, the following software/libraries are needed
 
@@ -25,4 +29,6 @@ Run the package in the termal using the launch file:
 ```
 roslaunch dashboard dashboard.launch
 ```
+
+
 
