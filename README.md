@@ -4,21 +4,19 @@
 
 Repository which contains all the work developed during my masters thesis. The project consists of a dynamic dashboard for an autonomous research vehicle of the University of Aveiro.
 
-Link to final document: http://lars.mec.ua.pt/public/LAR%20Projects/SystemDevelopment/2022_MiguelPinto/
-
-https://github.com/user-attachments/assets/24c1fa54-379a-4160-af00-b8634bc3b058
-
-## Description
-The information relative to the car was present at the CAN-Bus of the vehicle. Therefore a ROS node was responsible for receiving and decrying it. Then the information was published to a topic which is then subscribed by the dashboard software. As the software feeds the dashboard with information, an interactive display kept the driver updated on the vehicle’s current state. 
-
-A dashboard is a HMI. It consists of a panel that enables communication with amachine. On its screen, touch buttons are presented so the operator can easily navigate through its display. They are a considered passive ADAS since they are used mostly to check information and do not have a direct interference in the driving experience. It is important to dive into some aspects of this hardware to understand how it operates.
-
-The ATLASCAR2 is commonly used by investigators worldwide for autonomous driving projects, and much work has been done in this field. The dashboard must be capable of reading the messages received from the automobile and processing them Most information will be related to the car’s original features, such
-as autonomy and velocity As the software feeds the dashboard with information, an interactive display will keep the driver updated on the vehicle’s current state. The user must be capable of easily communicating with the machine by incorporating a user-friendly interface
-
 AtlasCar2             |  Field test
 :-------------------------:|:-------------------------:
 ![Final-ATLASCAR2-setup](https://github.com/user-attachments/assets/dc30f2cb-7cc8-4a2e-a729-0749d2315579)  |  ![Screenshot 2024-10-19 165427](https://github.com/user-attachments/assets/fc2b7229-ccbb-4928-85af-0701fa53b4e5)
+
+The dashboard was a display which enabled communication between the ATLASCAR2 and the driver who was updated live with all data related to the vehicle on a dynamic screen, enhancing the driver’s sense of security and joy while. In general, they are a considered passive ADAS since they are used mostly to check information and therefore they do not have a direct interference in the driving experience.
+
+The information relative to the car was present at the CAN-Bus of the vehicle. Therefore a ROS node was created in order to receiving and decrying the messages in it. Then the information was published to a ROS topic which is then subscribed by the dashboard software.
+
+Most information was related to the car’s original features, such as autonomy and velocity. Warnings and notifications were also added.
+
+Link to final document: http://lars.mec.ua.pt/public/LAR%20Projects/SystemDevelopment/2022_MiguelPinto/
+
+https://github.com/user-attachments/assets/24c1fa54-379a-4160-af00-b8634bc3b058
 
 ## Deployment
 
