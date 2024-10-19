@@ -24,14 +24,13 @@ to the network. The node publishes data in a topic named can messages which uses
 
 ![Screenshot 2024-10-19 172207](https://github.com/user-attachments/assets/da0671ca-cc1f-41d9-a417-de4d67e222a9)
 
-## Deployment
-
-To run the application, the following software/libraries are needed:
+## Requirements
 
 ```
-1- ROS (Communication protocol)
-2- can-utils (To get the data from the CAN bus)
-3- Kivy (To launch the front-end)
+- Python 3.x
+- ROS (Communication protocol)
+- can-utils (To get the data from the CAN bus)
+- Kivy (To launch the front-end)
 ```
 
 ## Launch
