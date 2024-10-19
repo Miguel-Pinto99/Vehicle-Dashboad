@@ -14,7 +14,7 @@ Most information was related to the car’s original features, such as autonomy 
 
 Link to final document: http://lars.mec.ua.pt/public/LAR%20Projects/SystemDevelopment/2022_MiguelPinto/
 
-AtlasCar2             |  Field test
+ATLASCAR2             |  Field test
 :-------------------------:|:-------------------------:
 ![Final-ATLASCAR2-setup](https://github.com/user-attachments/assets/dc30f2cb-7cc8-4a2e-a729-0749d2315579)  |  ![Screenshot 2024-10-19 165427](https://github.com/user-attachments/assets/fc2b7229-ccbb-4928-85af-0701fa53b4e5)
 
