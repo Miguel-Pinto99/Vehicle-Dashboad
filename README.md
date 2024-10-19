@@ -18,7 +18,7 @@ as autonomy and velocity As the software feeds the dashboard with information, a
 
 AtlasCar2             |  Field test
 :-------------------------:|:-------------------------:
-![Final-ATLASCAR2-setup](https://github.com/user-attachments/assets/2617a2cb-bcb0-4ebc-bdb7-f4d535bbd8bd)  |  ![Screenshot 2024-10-19 165410](https://github.com/user-attachments/assets/315ea002-afc0-47ae-9249-845a2375864c)
+![Final-ATLASCAR2-setup](https://github.com/user-attachments/assets/dc30f2cb-7cc8-4a2e-a729-0749d2315579)  |  ![Screenshot 2024-10-19 165410](https://github.com/user-attachments/assets/315ea002-afc0-47ae-9249-845a2375864c)
 
 ## Deployment
 
