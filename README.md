@@ -23,7 +23,7 @@ ATLASCAR2             |  Field test
 To run the application, the following software/libraries are needed:
 
 ```
-1- ROS - Robotic Operating System (Communication protocol)
+1- ROS (Communication protocol)
 2- can-utils (To get the data from the CAN bus)
 3- Kivy (To launch the front-end)
 ```
