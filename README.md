@@ -16,9 +16,9 @@ A dashboard is a HMI. It consists of a panel that enables communication with ama
 The ATLASCAR2 is commonly used by investigators worldwide for autonomous driving projects, and much work has been done in this field. The dashboard must be capable of reading the messages received from the automobile and processing them Most information will be related to the car’s original features, such
 as autonomy and velocity As the software feeds the dashboard with information, an interactive display will keep the driver updated on the vehicle’s current state. The user must be capable of easily communicating with the machine by incorporating a user-friendly interface
 
-Solarized dark             |  Solarized Ocean
+AtlasCar2             |  Field test
 :-------------------------:|:-------------------------:
-![Screenshot 2024-10-19 165427](https://github.com/user-attachments/assets/28493bb1-81df-44eb-ac75-b1cd067ba2f8)  |  ![Screenshot 2024-10-19 165410](https://github.com/user-attachments/assets/315ea002-afc0-47ae-9249-845a2375864c)
+![Final-ATLASCAR2-setup](https://github.com/user-attachments/assets/2617a2cb-bcb0-4ebc-bdb7-f4d535bbd8bd)  |  ![Screenshot 2024-10-19 165410](https://github.com/user-attachments/assets/315ea002-afc0-47ae-9249-845a2375864c)
 
 ## Deployment
 
