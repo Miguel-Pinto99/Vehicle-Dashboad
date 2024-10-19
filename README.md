@@ -2,7 +2,7 @@
 
 ## Context
 
-Repository which contains all the work developed during my masters thesis. The project consists of a dynamic dashboard for an autonomous research vehicle of the University of Aveiro.
+Repository which contains all the work developed during my masters thesis. The project consisted on a dynamic dashboard for an autonomous research vehicle of the University of Aveiro.
 
 https://github.com/user-attachments/assets/24c1fa54-379a-4160-af00-b8634bc3b058
 
