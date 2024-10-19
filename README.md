@@ -36,5 +36,13 @@ Run the package in the termal using the launch file:
 roslaunch dashboard dashboard.launch
 ```
 
+## ROS Network
+The network is composed of three nodes and two topics. The can node is responsible for reading and processing the CAN messages. Therefore, it is a vital structure since it feeds information 
+to the network. The node publishes data in a topic named can messages which uses a custom message named can msgs, created to facilitate communication between the different modules. The topic is then subscribed by two nodes: warning node and dashboard node. The first is responsible for generating the dashboard alerts. Their state is available in a separate topic called warning messages, which also uses a custom message named warning msgs. Finally, the dashboard node subscribes at the same time the can messages and warning messages topics. It is responsible for gathering all parameters from the network and displaying them in a dynamic layout created with the Kivy library. The custom messages were constructed according to the sent parameters in each node. If a node sends twenty variables, the custom message has the same number of fields, each designed for a specific variable.
+
+![Screenshot 2024-10-19 172207](https://github.com/user-attachments/assets/da0671ca-cc1f-41d9-a417-de4d67e222a9)
+
+
+
 
 
