@@ -2,302 +2,125 @@
 from pprint import pprint
 
 import can
-
 import rospy
-from std_msgs.msg import String
-from dashboard.msg import Can_msg
+from vehicle_msgs.msg import Can_msg
 
-import codecs
-import time
 
 def convert(bits):
-
-    #convert bytes to 8 bit array
-    if len(bits) != 8:
-        if len(bits) == 7 :
-            bits= '0' + bits
-        elif len(bits) == 6 :
-            bits= '00' + bits
-        elif len(bits) == 5 :
-            bits= '000' + bits
-        elif len(bits) == 4 :
-            bits= '0000' + bits
-        elif len(bits) == 3 :
-            bits= '00000' + bits
-        elif len(bits) == 2 :
-            bits= '000000' + bits
-        elif len(bits) == 1 :
-            bits= '0000000' + bits
+    return bits.zfill(8)
 
 
-    else:
-        bits=bits
-    return (bits)
+def process_0x424(data):
+    return {
+        "Alerta_CintoC": bool(int(data[0][1])),
+        "Alerta_CintoP": bool(int(data[0][0])),
+        "Porta_Condutor": bool(int(data[2][6])),
+        "Porta_Outras": bool(int(data[2][7])),
+        "ParaBrisas_Frente": bool(int(data[1][4])),
+        "ParaBrisas_Atras": bool(int(data[1][3])),
+        "Pisca_Esq": bool(int(data[1][6])),
+        "Pisca_Dir": bool(int(data[1][7])),
+        "Medios": bool(int(data[1][1])),
+        "Maximos": bool(int(data[1][2])),
+    }
+
+
+def process_0x3A4(data):
+    return {
+        "Temperatura_AC": int(data[0][7])
+        + int(data[0][6]) * 2
+        + int(data[0][5]) * 4
+        + int(data[0][4]) * 8,
+        "Intensidade_AC": int(data[1][7])
+        + int(data[1][6]) * 2
+        + int(data[1][5]) * 4
+        + int(data[1][4]) * 8,
+        "Btn_Tmax": bool(int(data[0][2])),
+        "Btn_Solf": bool(int(data[0][1])),
+        "Btn_Imax": bool(int(data[0][0])),
+    }
+
+
+def process_0x412(data):
+    return {
+        "Velocidade": data[1],
+        "Contador_Km": (data[2] * 65536) + (data[3] * 256) + data[4],
+    }
+
+
+def process_0x418(data):
+    mudanca_map = {0x50: "Park", 0x52: "Reverse", 0x4E: "Neutral", 0x44: "Foward"}
+    return {"Mudanca": mudanca_map.get(data[0], "Nada")}
+
+
+def process_0x346(data):
+    return {"AutonomiaKm": data[7]}
+
+
+def process_0x374(data):
+    return {"AutonomiaPerc": (data[1] - 10) / 2}
+
+
+def process_0x373(data):
+    estado_bateria = (((data[2]) * 256) + (data[3] - 128) * 128) / 100
+    return {"Carregador": estado_bateria < 0}
 
 
 def main():
-
-    #Parameters of comunication
-    #bustype = 'socketcan_native'
-    bustype = 'socketcan'
-    #channel= 'vcan0'
-    channel= 'can0'
+    bustype = "socketcan"
+    channel = "can0"
     bitrate = 500000
 
-    #Variables inicialization
-    AutonomiaPerc=0
-    AutonomiaKm=0
-    Mudanca= str('Nada')
-    Velocidade=0
-    Contador_Km=0
-    Carregador=0
-    Porta_Condutor=0
-    Porta_Outras= 0
-    ParaBrisas_Frente = 0
-    ParaBrisas_Atras = 0
-    Temperatura_AC = 0
-    Intensidade_AC = 0
-    Btn_Tmax=0
-    Btn_Imax=0
-    Btn_Solf=0
-    Alerta_CintoC=0
-    Alerta_CintoP=0
-    Pisca_Dir=0
-    Pisca_Esq=0
-    Medios=0
-    Maximos=0
+    pub = rospy.Publisher("can_messages", Can_msg, queue_size=10)
+    rospy.init_node("can_node", anonymous=True)
 
-    # publish functiom
-    pub = rospy.Publisher('can_messages', Can_msg, queue_size=10)
-    # Inicialize can_node
-    rospy.init_node('can_node', anonymous=True)
-    rate = rospy.Rate(10)
+    process_map = {
+        hex(0x424): process_0x424,
+        hex(0x3A4): process_0x3A4,
+        hex(0x412): process_0x412,
+        hex(0x418): process_0x418,
+        hex(0x346): process_0x346,
+        hex(0x374): process_0x374,
+        hex(0x373): process_0x373,
+    }
 
-    while True:
-        bus = can.interface.Bus(channel=channel, interface=bustype, bitrate=bitrate)
-        # Read messages from can
-        message = bus.recv() #Read messages from can
-        # Dectect if any message is avaiable
-        if (message != None):
-            if (len(message.data) > 0):
-                if (len(message.data) > 0):
+    while not rospy.is_shutdown():
+        try:
+            bus = can.interface.Bus(channel=channel, interface=bustype, bitrate=bitrate)
+            message = bus.recv()
+            if message and len(message.data) > 0:
+                id = hex(message.arbitration_id)
+                data = [convert(bin(byte)[2:]) for byte in message.data]
+                if id in process_map:
+                    result = process_map[id](data)
+                    pprint(result)
 
-                    # get id from message
-                    id =hex(message.arbitration_id)
+                    msg = Can_msg()
+                    msg.autonomia_perc = int(result.get("AutonomiaPerc", 0))
+                    msg.autonomia_km = int(result.get("AutonomiaKm", 0))
+                    msg.contador_km = int(result.get("Contador_Km", 0))
+                    msg.velocidade = int(result.get("Velocidade", 0))
+                    msg.temperatura_ac = int(result.get("Temperatura_AC", 0))
+                    msg.intensidade_ac = int(result.get("Intensidade_AC", 0))
+                    msg.mudanca = str(result.get("Mudanca", "Nada"))
+                    msg.porta_condutor = bool(result.get("Porta_Condutor", False))
+                    msg.porta_outras = bool(result.get("Porta_Outras", False))
+                    msg.parabrisas_frente = bool(result.get("ParaBrisas_Frente", False))
+                    msg.parabrisas_atras = bool(result.get("ParaBrisas_Atras", False))
+                    msg.btn_tmax = bool(result.get("Btn_Tmax", False))
+                    msg.btn_imax = bool(result.get("Btn_Imax", False))
+                    msg.alerta_cintop = bool(result.get("Alerta_CintoP", False))
+                    msg.alerta_cintoc = bool(result.get("Alerta_CintoC", False))
+                    msg.pisca_dir = bool(result.get("Pisca_Dir", False))
+                    msg.pisca_esq = bool(result.get("Pisca_Esq", False))
+                    msg.medios = bool(result.get("Medios", False))
+                    msg.maximos = bool(result.get("Maximos", False))
+                    msg.carregador = bool(result.get("Carregador", False))
 
-
-                    #Store the bytes and bits in variables
-                    try:
-                        B0=(message.data[0])
-                        b0=(bin(message.data[0]))[2:]
-                        b0=convert(b0)
-
-                    except:
-                        pass
-                    try:
-                        B1=(message.data[1])
-                        b1 = (bin(message.data[1]))[2:]
-                        b1 = convert(b1)
-                    except:
-                        pass
-                    try:
-                        B2=(message.data[2])
-                        b2 = (bin(message.data[2]))[2:]
-                        b2 = convert(b2)
-                    except:
-                        pass
-                    try:
-                        B3=(message.data[3])
-                        b3 = (bin(message.data[3]))[2:]
-                        b3 = convert(b3)
-                    except:
-                        pass
-                    try:
-                        B4=(message.data[4])
-                        b4 = (bin(message.data[4]))[2:]
-                        b4 = convert(b4)
-                    except:
-                        pass
-                    try:
-                        B5=(message.data[5])
-                        b5 = (bin(message.data[5]))[2:]
-                        b5 = convert(b5)
-                    except:
-                        pass
-                    try:
-                        B6=(message.data[6])
-                        b6 = (bin(message.data[6]))[2:]
-                        b6 = convert(b6)
-                    except:
-                        pass
-                    try:
-                        B7=(message.data[7])
-                        b7 = (bin(message.data[7]))[2:]
-                        b7 = convert(b7)
-                    except:
-                        pass
-
-                    #Compare bytes and bits to database
-                    if id == hex(0x424):
-                        if int(b0[1]) == 1:
-                            Alerta_CintoC = True
-                        else:
-                            Alerta_CintoC = False
-
-                        if int(b0[0]) == 1:
-                            Alerta_CintoP = True
-                        else:
-                            Alerta_CintoP = False
-
-                        if int(b2[6]) == 1 :
-                            Porta_Condutor = True
-                        else:
-                            Porta_Condutor = False
-
-                        if int(b2[7]) == 1 :
-                            Porta_Outras = True
-                        else:
-                            Porta_Outras = False
-
-                        if int(b1[4]) == 1 :
-                            ParaBrisas_Frente = True
-                        else:
-                            ParaBrisas_Frente = False
-
-                        if int(b1[3]) == 1 :
-                            ParaBrisas_Atras = True
-                        else:
-                            ParaBrisas_Atras = False
+                    pub.publish(msg)
+        except Exception as e:
+            rospy.logerr(f"Error: {e}")
 
 
-
-                        if int(b1[6]) == 1 :
-                            Pisca_Esq = True
-                        else:
-                            Pisca_Esq = False
-
-                        if int(b1[7]) == 1 :
-                            Pisca_Dir = True
-                        else:
-                            Pisca_Dir = False
-
-                        if int(b1[1]) == 1 :
-                            Medios = True
-                        else:
-                            Medios = False
-
-                        if int(b1[2]) == 1 :
-                            Maximos = True
-                        else:
-                            Maximos = False
-
-
-
-
-
-                    if id == hex(0x3A4):
-                        Temperatura_AC = int(b0[7]) + int(b0[6])*2 + int(b0[5])*4 + int(b0[4])*8
-                        Intensidade_AC = int(b1[7]) + int(b1[6])*2 + int(b1[5])*4 + int(b1[4])*8
-
-                        if int(b0[2]) == 1 :
-                            Btn_Tmax = True
-                        else:
-                            Btn_Tmax = False
-
-                        if int(b0[1]) == 1 :
-                            Btn_Solf = True
-                        else:
-                            Btn_Solf = False
-
-                        if int(b0[0]) == 1 :
-                            Btn_Imax = True
-                        else:
-                            Btn_Imax = False
-
-
-
-
-
-                    if id == hex(0x412): #Velocity,Range
-                        Velocidade = B1
-                        Contador_Km = (B2*65536)+(B3*256)+B4
-
-                    if id == hex(0x418): #Mudancas
-                        if B0 == 0x50:
-                            Mudanca="Park"
-                        elif B0 == 0x52:
-                            Mudanca="Reverse"
-                        elif B0 == 0x4E:
-                            Mudanca="Neutral"
-                        elif B0 == 0x44:
-                            Mudanca="Foward"
-                        else:
-                            Mudanca=Mudanca
-
-
-                    if id == hex(0x346): #Range em KM
-                        AutonomiaKm=B7
-
-                    if id == hex(0x374): #Range em
-                        AutonomiaPerc=(B1-10)/2
-
-                    if id == hex(0x373):
-                        EstadoBateria= (((B2)*256)+(B3-128)*128)/100
-                        if EstadoBateria < 0 :
-                            Carregador= True
-                        else:
-                            Carregador= False
-
-                #Build dictionary with the variables
-                Dados = {'Autonomia (%)': AutonomiaPerc,
-                          'Autonomia (Km)': AutonomiaKm,
-                          'Mudanças': Mudanca,
-                          'Velocidade': Velocidade,
-                          'Contador de Km': Contador_Km,
-                          'Porta_Condutor': Porta_Condutor,
-                          'Porta_Outras': Porta_Outras,
-                          'Para Brisas Frente': ParaBrisas_Frente,
-                          'Para Brisas Atras': ParaBrisas_Atras,
-                          'Temperatura AC': Temperatura_AC,
-                          'Intensidade AC': Intensidade_AC,
-                          'Botão Temp.Max': Btn_Tmax,
-                          'Botão Int.Max': Btn_Imax,
-                          'Botão Solfagem': Btn_Solf,
-                          'Alerta Cinto Passageiro': Alerta_CintoP,
-                          'Alerta Cinto Condutor': Alerta_CintoC,
-                          'Pisca Direito': Pisca_Dir,
-                          'Pisca Esquerdo': Pisca_Esq,
-                          'Médios': Medios,
-                          'Máximos': Maximos,
-                          'Carregador': Carregador}
-
-                pprint(Dados)
-
-        #Build message
-        msg = Can_msg()
-        msg.autonomia_perc= int(AutonomiaPerc)
-        msg.autonomia_km= int(AutonomiaKm)
-        msg.contador_km= int(Contador_Km)
-        msg.velocidade= int(Velocidade)
-        msg.temperatura_ac= int(Temperatura_AC)
-        msg.intensidade_ac= int(Intensidade_AC)
-        msg.mudanca= str(Mudanca)
-        msg.porta_condutor= bool(Porta_Condutor)
-        msg.porta_outras = bool(Porta_Outras)
-        msg.parabrisas_frente = bool(ParaBrisas_Frente)
-        msg.parabrisas_atras = bool(ParaBrisas_Atras)
-        msg.btn_tmax = bool(Btn_Tmax)
-        msg.btn_imax = bool(Btn_Imax)
-        msg.alerta_cintop = bool(Alerta_CintoP)
-        msg.alerta_cintoc = bool(Alerta_CintoC)
-        msg.pisca_dir = bool(Pisca_Dir)
-        msg.pisca_esq = bool(Pisca_Esq)
-        msg.medios = bool(Medios)
-        msg.maximos = bool(Maximos)
-        msg.carregador = bool(Carregador)
-
-        #Publish message
-        pub.publish(msg)
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

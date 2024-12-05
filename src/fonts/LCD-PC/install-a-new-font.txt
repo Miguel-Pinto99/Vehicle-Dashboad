@@ -1,10 +1,10 @@
 Installing fonts is quick and simple. Once fonts are installed, they are available to yours programs.
 
-The font packages you download from the www.ffonts.net is in compressed .zip files to reduce file size and make downloading faster. 
+The font packages you download from the www.ffonts.net is in compressed .zip files to reduce file size and make downloading faster.
 If you have downloaded a font that is saved in .zip format, you can "unzip" it by double-clicking the icon for the font and following the instructions on the screen.
 
 INSTALLING MORE THAN 1000 FONTS ONTO YOUR COMPUTER CAN CAUSE A REDUCTION IN SPEED.
-WE RECOMMEND THAT YOU LIMIT YOURSELF TO A NUMBER LESS THAN 1000 (400-500). 
+WE RECOMMEND THAT YOU LIMIT YOURSELF TO A NUMBER LESS THAN 1000 (400-500).
 
 
 Installing new fonts
