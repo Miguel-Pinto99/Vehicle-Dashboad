@@ -6,19 +6,20 @@ Repository which contains all the work developed during my masters thesis. The p
 
 https://github.com/user-attachments/assets/24c1fa54-379a-4160-af00-b8634bc3b058
 
-The dashboard was a display which enabled communication between the ATLASCAR2 and the driver who was updated live with all data related to the vehicle on a dynamic screen, enhancing the driver’s sense of security and joy while. In general, they are a considered passive ADAS since they are used mostly to check information and therefore they do not have a direct interference in the driving experience.
+The dashboard served as a display that enabled communication between the ATLASCAR2 and the driver, updating the driver in real-time with all data related to the vehicle on a dynamic screen, thereby enhancing the driver’s situational awareness.
 
-The information relative to the car was present at the CAN-Bus of the vehicle. Therefore a ROS node was created in order to receiving and decrying the messages in it. Then the information was published to a ROS topic which is then subscribed by the dashboard software.
+The information relative to the car was present at the CAN-Bus of the vehicle. Therefore a ROS network was created with 3 nodes and 2 topics. A node for receiving  and decrying the messages in it that then wpuld publish the new information to a topic.  Other to create warnings and a third  for the dashboard. The display for the project was developed using Kivy, a Python library for developing multitouch applications.
 
 Most information was related to the car’s original features, such as autonomy and velocity. Warnings and notifications were also added.
 
 Link to final document: http://lars.mec.ua.pt/public/LAR%20Projects/SystemDevelopment/2022_MiguelPinto/
 
-ATLASCAR2             |  Field test
-:-------------------------:|:-------------------------:
-![Final-ATLASCAR2-setup](https://github.com/user-attachments/assets/dc30f2cb-7cc8-4a2e-a729-0749d2315579)  |  ![Screenshot 2024-10-19 165427](https://github.com/user-attachments/assets/fc2b7229-ccbb-4928-85af-0701fa53b4e5)
+|                                                ATLASCAR2                                                |                                                   Field test                                                   |
+| :-----------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------: |
+| ![Final-ATLASCAR2-setup](https://github.com/user-attachments/assets/dc30f2cb-7cc8-4a2e-a729-0749d2315579) | ![Screenshot 2024-10-19 165427](https://github.com/user-attachments/assets/fc2b7229-ccbb-4928-85af-0701fa53b4e5) |
 
 ## ROS Network
+
 The network is composed of three nodes and two topics. The can node is responsible for reading and processing the CAN messages. Therefore, it is a vital structure since it feeds information
 to the network. The node publishes data in a topic named can messages which uses a custom message named can msgs, created to facilitate communication between the different modules. The topic is then subscribed by two nodes: warning node and dashboard node. The first is responsible for generating the dashboard alerts. Their state is available in a separate topic called warning messages, which also uses a custom message named warning msgs. Finally, the dashboard node subscribes at the same time the can messages and warning messages topics. It is responsible for gathering all parameters from the network and displaying them in a dynamic layout created with the Kivy library. The custom messages were constructed according to the sent parameters in each node. If a node sends twenty variables, the custom message has the same number of fields, each designed for a specific variable.
 
