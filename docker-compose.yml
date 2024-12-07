@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  ros_noetic:
+    build: .
+    container_name: vehicle_dashboard-thesis2022-container
+    image: vehicle_dashboard-thesis2022
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+      - ROS_VERSION=noetic
+      - ROS_DISTRO=noetic
+    volumes:
+      - ./src:/root/catkin_ws/src
+    ports:
+      - "11311:11311"
+    command: bash -c "source /opt/ros/noetic/setup.bash && source /root/catkin_ws/devel/setup.bash && roscore"
+    stdin_open: true
+    tty: true

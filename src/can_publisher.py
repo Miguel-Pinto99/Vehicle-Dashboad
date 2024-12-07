@@ -3,7 +3,7 @@ from pprint import pprint
 
 import can
 import rospy
-from vehicle_msgs.msg import Can_msg
+from msg import Can_msg
 
 
 def convert(bits):

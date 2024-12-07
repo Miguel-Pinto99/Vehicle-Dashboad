@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import rospy
-from dashboard.msg import Can_msg
-from dashboard.msg import Warning_msg
+from msg import Can_msg
+from msg import Warning_msg
 
 
 def callback(msg):
