@@ -8,7 +8,7 @@ https://github.com/user-attachments/assets/24c1fa54-379a-4160-af00-b8634bc3b058
 
 The dashboard served as a display that enabled communication between the ATLASCAR2 and the driver, updating the driver in real-time with all data related to the vehicle on a dynamic screen, thereby enhancing the driver’s situational awareness.
 
-The information relative to the car was present at the CAN-Bus of the vehicle. Therefore a ROS network was created with 3 nodes and 2 topics. A node was responsabile for receiving and decrying the messages using a OBD-II port connection.Then the data would be published into a topic.  Other node creates warnings by analysing info such as doors or the charger state. Finnaly a third node would be responsable for the front-end logic. The display for the project was developed using Kivy, a Python library for developing multitouch applications.
+The information relative to the car was present at the CAN-Bus of the vehicle. Therefore a ROS network was created with 3 nodes and 2 topics. A node was responsabile for receiving and decrying the messages using a OBD-II port connection and then the data would be published into a topic.  Other node creates warnings by analysing info such as doors or the charger state. Finnaly a third node would be responsable for the front-end logic. The display for the project was developed using Kivy, a Python library for developing multitouch applications.
 
 Most information was related to the car’s original features, such as autonomy and velocity. Warnings and notifications were also added.
 
