@@ -1,0 +1,44 @@
+{
+    "name": "Vehicle Dashboard",
+    "dockerComposeFile": [
+        "../docker-compose.yml"
+    ],
+    "service": "ros_noetic",
+    "init": true,
+    "workspaceFolder": "/root/catkin_ws/src",
+    "customizations": {
+        "vscode": {
+
+            "settings": {
+                "editor.formatOnSave": true,
+                "[python]": {
+                    "analysis.autoImportCompletions": true,
+                    "analysis.typeCheckingMode": "basic",
+                    "defaultInterpreterPath": "/usr/local/bin/python",
+                    "editor.codeActionsOnSave": {
+                        "source.organizeImports": "always"
+                    },
+                    "editor.defaultFormatter": "charliermarsh.ruff",
+                    "languageServer": "Pylance",
+                    "linting.enabled": true,
+                    "linting.mypyEnabled": true,
+                    "linting.mypyPath": "/usr/local/bin/mypy"
+                }
+            },
+            "extensions": [
+                "davidanson.vscode-markdownlint",
+                "mrmlnc.vscode-duplicate",
+                "visualstudioexptteam.vscodeintellicode",
+                "visualstudioexptteam.intellicode-api-usage-examples",
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "charliermarsh.ruff"
+            ]
+        }
+    },
+    "runArgs": [
+        "--init"
+    ],
+    "overrideCommand": false,
+    "postCreateCommand": "roscore"
+}

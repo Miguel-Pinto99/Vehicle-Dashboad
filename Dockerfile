@@ -30,5 +30,7 @@ RUN mkdir -p src
 COPY . src/vehicle_dashboard/
 RUN chown -R root:root src/vehicle_dashboard/
 
+# # Set entrypoint
+# ENTRYPOINT ["/entrypoint"]
 # Default command
-CMD ["bash"]
+# CMD ["bash"]

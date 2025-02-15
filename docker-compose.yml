@@ -1,26 +1,16 @@
-version: '3'
+version: '3.8'
 services:
   ros_noetic:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: vehicle_dashboard_local
     image: vehicle_dashboard
-    environment:
-      - ROS_VERSION=noetic
-      - ROS_DISTRO=noetic
-    volumes:
-      - ./src:/root/catkin_ws/src
+    networks:
+      default: null
     ports:
-      - "11311:11311"
-    command: >
-      bash -c "
-      source /opt/ros/noetic/setup.bash &&
-      cd /root/catkin_ws &&
-      catkin_make &&
-      source /root/catkin_ws/devel/setup.bash &&
-      roscore"
-    stdin_open: true
-    tty: true
-    healthcheck:
-      test: ["CMD-SHELL", "ps aux | grep -v grep | grep -q roscore"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
-    restart: no
+      - "8000:8000"
+    command: ["bash", "-c", "while true; do sleep 1000; done"]
+networks:
+  default:
+    name: vehicle-dashboad_default
