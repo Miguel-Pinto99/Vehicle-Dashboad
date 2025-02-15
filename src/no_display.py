@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import rospy
-from dashboard.msg import Can_msg
-from dashboard.msg import Warning_msg
+from vehicle_dashboard.msg import Can_msg
+from vehicle_dashboard.msg import Warning_msg
 
 from kivymd.app import MDApp
 from kivy.properties import ObjectProperty
