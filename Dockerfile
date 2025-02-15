@@ -72,4 +72,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     gstreamer1.0-pulseaudio \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install kivy[base] kivy_examples kivymd kivy-garden kivy_garden.mapview
+# Install Kivy for Python 3.8
+RUN pip3 install kivy[base] kivy_examples
+RUN pip3 install https://github.com/kivymd/KivyMD/archive/master.zip
+RUN pip3 install kivy-garden
+RUN pip3 install kivy-garden --user
