@@ -3,7 +3,7 @@ name = "vehicle-dashboad-thesis2022"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 dependencies = [
     "can>=0.0.0",
 ]

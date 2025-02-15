@@ -5,7 +5,7 @@
     ],
     "service": "ros_noetic",
     "init": true,
-    "workspaceFolder": "/root/catkin_ws/src",
+    "workspaceFolder": "/root/catkin_ws",
     "customizations": {
         "vscode": {
 

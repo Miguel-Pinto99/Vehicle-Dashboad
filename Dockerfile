@@ -9,7 +9,13 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     python3-rosinstall \
     python3-vcstools \
     python3-tk \
+    python3-can \
     && rm -rf /var/lib/apt/lists/*
+
+# RUN apt-get update && apt-get install --no-install-recommends -y \
+#     python3-kivy \
+#     kivy-examples \
+#     && rm -rf /var/lib/apt/lists/*
 
 # install aditional dependencies
 RUN apt-get update && apt-get install -y vim \
@@ -27,10 +33,15 @@ WORKDIR $ROS_WS
 RUN mkdir -p src
 
 # Copy source code
-COPY . src/vehicle_dashboard/
-RUN chown -R root:root src/vehicle_dashboard/
+COPY . src/
+RUN chown -R root:root src/
 
-# # Set entrypoint
-# ENTRYPOINT ["/entrypoint"]
-# Default command
-# CMD ["bash"]
+RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+RUN echo "export PATH=/opt/ros/noetic/bin:\$PATH" >> ~/.bashrc
+RUN echo "export ROS_PACKAGE_PATH=/opt/ros/noetic/share:\$ROS_PACKAGE_PATH" >> ~/.bashrc
+RUN /bin/bash -c "source ~/.bashrc"
+RUN /bin/bash -c "source ~/.bashrc"
+RUN echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
+RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
+
+RUN chmod -R +x $ROS_WS/src
