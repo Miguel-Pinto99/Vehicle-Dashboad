@@ -1,46 +1,34 @@
-# Use an official ROS base image
-FROM osrf/ros:noetic-desktop-full
+FROM osrf/ros:noetic-desktop-full-focal
 
-# Set environment variables
-ENV DEBIAN_FRONTEND=noninteractive
-ENV ROS_VERSION=noetic
-ENV ROS_DISTRO=noetic
-
-# Update and install basic dependencies
-RUN apt-get update && apt-get install -y \
+# install bootstrap tools
+RUN apt-get update && apt-get install --no-install-recommends -y \
     build-essential \
-    cmake \
     git \
-    python3 \
+    python3-rosdep \
     python3-pip \
-    python3-colcon-common-extensions \
-    ros-$ROS_DISTRO-catkin \
+    python3-rosinstall \
+    python3-vcstools \
+    python3-tk \
     && rm -rf /var/lib/apt/lists/*
 
-# Install rospy and other Python dependencies
-RUN apt-get update && apt-get install -y \
-    python3-rospy \
-    && rm -rf /var/lib/apt/lists/*
+# install aditional dependencies
+RUN apt-get update && apt-get install -y vim \
+    ros-noetic-ros-numpy \
+    ros-noetic-rviz-visual-tools
 
-# Install python-can
-RUN pip3 install python-can
+# Initialize rosdep
+RUN rosdep init || true && rosdep update
 
-# Set up ROS workspace
-WORKDIR /root
-RUN mkdir -p catkin_ws/src
-WORKDIR /root/catkin_ws
-RUN /bin/bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && catkin_make"
+# Define the ROS workspace
+ENV ROS_WS=/root/catkin_ws
 
-# Source ROS setup in bashrc
-RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
-RUN echo "source /root/catkin_ws/devel/setup.bash" >> ~/.bashrc
+# Create workspace and set as working directory
+WORKDIR $ROS_WS
+RUN mkdir -p src
 
-# Expose ROS master port
-EXPOSE 1131
-COPY . /root/catkin_ws/src/
-# RUN chmod +x /root/catkin_ws/src/can_publisher.py
-# RUN chmod +x /root/catkin_ws/src/can_publisher.py
-# RUN chmod +x /root/catkin_ws/src/can_publisher.py
+# Copy source code
+COPY . src/vehicle_dashboard/
+RUN chown -R root:root src/vehicle_dashboard/
 
-# Start roscore on container startup
-CMD ["bash", "-c", "source /opt/ros/noetic/setup.bash && source /root/catkin_ws/devel/setup.bash && roscore"]
+# Default command
+CMD ["bash"]

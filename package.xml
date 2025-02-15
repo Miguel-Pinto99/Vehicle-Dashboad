@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>dashboard</name>
+  <name>vehicle_dashboard</name>
   <version>0.0.0</version>
   <description>The dashboard package</description>
 
