@@ -6,6 +6,24 @@ Repository which contains all the work developed during my masters thesis. The p
 
 https://github.com/user-attachments/assets/24c1fa54-379a-4160-af00-b8634bc3b058
 
+## ⚠️ **Disclamer:**
+
+It is not possible to start the application. ROS Noetic has been discontinued and replaced by ROS2. The last compatible Python version is 3.8 and therefore there are compatibility issues with the libraries used in this project, mainly with Kivy.
+
+## Requirements
+
+- Docker: To containerize the application and manage dependencies.
+
+## Launch
+
+To start the application, use the following command in the terminal:
+
+```sh
+docker-compose up
+```
+
+## Description
+
 The dashboard served as a display that enabled communication between the ATLASCAR2 and the driver, updating the driver in real-time with all data related to the vehicle on a dynamic screen, thereby enhancing the driver’s situational awareness.
 
 The information relative to the car was present at the CAN-Bus of the vehicle. Therefore a ROS network was created with several nodes and topics. A node was responsabile for receiving and decrying the messages using a OBD-II port connection and then the data would be published into a topic.  Other node creates warnings by analysing info such as doors or the charger state. Finnaly a third node would be responsable for the front-end logic. The display for the project was developed using Kivy, a Python library for developing multitouch applications.
@@ -20,24 +38,6 @@ Link to final document: http://lars.mec.ua.pt/public/LAR%20Projects/SystemDevelo
 
 ## ROS Network
 
-The network is composed of three nodes and two topics. The can node is responsible for reading and processing the CAN messages. Therefore, it is a vital structure since it feeds information
-to the network. The node publishes data in a topic named can messages which uses a custom message named can msgs, created to facilitate communication between the different modules. The topic is then subscribed by two nodes: warning node and dashboard node. The first is responsible for generating the dashboard alerts. Their state is available in a separate topic called warning messages, which also uses a custom message named warning msgs. Finally, the dashboard node subscribes at the same time the can messages and warning messages topics. It is responsible for gathering all parameters from the network and displaying them in a dynamic layout created with the Kivy library. The custom messages were constructed according to the sent parameters in each node. If a node sends twenty variables, the custom message has the same number of fields, each designed for a specific variable.
+The network is composed of three nodes and two topics. The can node is responsible for reading and processing the CAN messages. Then it publishes the data in a topic named can messages which uses a custom message named can msgs, created to facilitate communication between the different modules. The topic is then subscribed by two nodes: warning node and dashboard node. The first is responsible for generating the dashboard alerts. Their state is available in a separate topic called warning messages, which also uses a custom message named warning msgs. Finally, the dashboard node subscribes at the same time the can messages and warning messages topics. It is responsible for gathering all parameters from the network and displaying them in a dynamic layout created with the Kivy library. The custom messages were constructed according to the sent parameters in each node. If a node sends twenty variables, the custom message has the same number of fields, each designed for a specific variable.
 
 ![Screenshot 2024-10-19 172207](https://github.com/user-attachments/assets/da0671ca-cc1f-41d9-a417-de4d67e222a9)
-
-## Requirements
-
-```
-- Python 3.x
-- ROS (Communication protocol)
-- can-utils (To get the data from the CAN bus)
-- Kivy (To launch the front-end)
-```
-
-## Launch
-
-Run the package in the termal using the launch file:
-
-```
-roslaunch dashboard dashboard.launch
-```
