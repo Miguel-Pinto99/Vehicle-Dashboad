@@ -1,6 +1,6 @@
 FROM osrf/ros:noetic-desktop-full-focal
 
-# install bootstrap tools
+# Install bootstrap tools
 RUN apt-get update && apt-get install --no-install-recommends -y \
     build-essential \
     git \
@@ -12,17 +12,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     python3-can \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python 3.8
-RUN apt-get update && apt-get install --no-install-recommends -y \
-    python3.8 \
-    python3.8-dev \
-    python3.8-venv \
-    && rm -rf /var/lib/apt/lists/*
-
-# Update alternatives to use Python 3.8
-RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
-
-# install aditional dependencies
+# Install additional dependencies
 RUN apt-get update && apt-get install -y vim \
     ros-noetic-ros-numpy \
     ros-noetic-rviz-visual-tools
@@ -41,16 +31,16 @@ RUN mkdir -p src
 COPY . src/
 RUN chown -R root:root src/
 
-RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
-RUN echo "export PATH=/opt/ros/noetic/bin:\$PATH" >> ~/.bashrc
-RUN echo "export ROS_PACKAGE_PATH=/opt/ros/noetic/share:\$ROS_PACKAGE_PATH" >> ~/.bashrc
-RUN /bin/bash -c "source ~/.bashrc"
-RUN /bin/bash -c "source ~/.bashrc"
-RUN echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
-RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
+# Setup environment
+RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc && \
+    echo "export PATH=/opt/ros/noetic/bin:\$PATH" >> ~/.bashrc && \
+    echo "export ROS_PACKAGE_PATH=/opt/ros/noetic/share:\$ROS_PACKAGE_PATH" >> ~/.bashrc && \
+    echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc && \
+    /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
 
 RUN chmod -R +x $ROS_WS/src
 
+# Install additional Python packages
 RUN apt-get update && apt-get install --no-install-recommends -y \
     python3-pip \
     python3-setuptools \
@@ -73,7 +63,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Kivy for Python 3.8
-RUN pip3 install kivy[base] kivy_examples
-RUN pip3 install https://github.com/kivymd/KivyMD/archive/master.zip
-RUN pip3 install kivy-garden
-RUN pip3 install kivy-garden --user
+RUN pip3 install kivy[base] kivy_examples \
+    https://github.com/kivymd/KivyMD/archive/master.zip \
+    kivy-garden \
+    kivy-garden --user
