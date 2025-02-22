@@ -5,11 +5,15 @@ services:
       dockerfile: Dockerfile
     container_name: vehicle_dashboard_local
     image: vehicle_dashboard
-    networks:
-      default: null
-    ports:
-      - "8000:8000"
-    command: ["bash", "-c", "while true; do sleep 1000; done"]
-networks:
-  default:
-    name: vehicle-dashboad_default
+    stdin_open: true
+    tty: true
+    working_dir: /root/catkin_ws
+    # command: bash -c "source /opt/ros/noetic/setup.bash && source devel/setup.bash && chmod +x src/no_display.py && roslaunch vehicle_dashboard vehicle_dashboard.launch"
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - XAUTHORITY=/tmp/.docker.xauth
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - .:/root/catkin_ws/src:rw

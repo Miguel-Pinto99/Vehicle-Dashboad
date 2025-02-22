@@ -9,6 +9,7 @@
     "customizations": {
         "vscode": {
 
+
             "settings": {
                 "editor.formatOnSave": true,
                 "[python]": {

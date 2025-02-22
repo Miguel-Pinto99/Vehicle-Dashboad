@@ -86,9 +86,10 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     libjpeg-dev \
     zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
+
 # Install Kivy 2.1.0 and KivyMD 0.104.2 for Python 3.8
 RUN pip3 install kivy==2.1.0 kivy_examples \
     kivymd==0.104.2 \
     kivy-garden \
     kivy-garden --user \
-    kivy_garden.mapview
+    kivy_garden.mapview \
