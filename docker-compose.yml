@@ -8,7 +8,6 @@ services:
     stdin_open: true
     tty: true
     working_dir: /root/catkin_ws
-    # command: bash -c "source /opt/ros/noetic/setup.bash && source devel/setup.bash && chmod +x ./src./src/no_display.py . && roslaunch vehicle_dashboard vehicle_dashboard.launch"
     environment:
       - DISPLAY=${DISPLAY}
       - QT_X11_NO_MITSHM=1
@@ -17,3 +16,4 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - .:/root/catkin_ws/src:rw
+    command: bash -c "source /opt/ros/noetic/setup.bash && source devel/setup.bash && roslaunch vehicle_dashboard vehicle_dashboard.launch"
