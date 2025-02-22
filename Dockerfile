@@ -92,4 +92,4 @@ RUN pip3 install kivy==2.1.0 kivy_examples \
     kivymd==0.104.2 \
     kivy-garden \
     kivy-garden --user \
-    kivy_garden.mapview \
+    kivy_garden.mapview

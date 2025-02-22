@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
 <launch>
   <node name="dashboard_node" pkg="vehicle_dashboard" type="no_display.py"/>
-  <node name="rqt" pkg="rqt_gui" type="rqt_gui" args="--perspective-file $(find vehicle_dashboard)/launch/rqt_specs.perspective"/>
+  <node name="rqt" pkg="rqt_gui" type="rqt_gui" args="--perspective-file /root/catkin_ws/src/src/launch/rqt_specs.perspective"/>
 </launch>
